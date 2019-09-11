@@ -29,8 +29,8 @@ $ source ~/.bashrc
 
 ```
 $ echo '*.ipynb  filter=clean_ipynb' >> ~/.config/git/attributes
-$ git config --global filter.clean_ipynb.clean ipynb_drop_output.py
-$ git config --global filter.clean_ipynb.smudge cat
+$ git config filter.clean_ipynb.clean ipynb_drop_output.py
+$ git config filter.clean_ipynb.smudge cat
 ```
 
 Alternatively just run the setup script

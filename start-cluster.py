@@ -56,7 +56,7 @@ print()
 
 #copy the livy initialization to the bucket
 print("Setting up livy initialization");
-subprocess.check_call(['gsutil', 'cp', 'gs://dataproc-initialization-actions/livy/livy.sh','gs://' + bucket + '/livy.sh'])
+subprocess.check_call(['gsutil', 'cp', './dataproc-initialization-actions/livy/livy.sh','gs://' + bucket + '/livy.sh'])
 print()
 
 #list the existing clusters

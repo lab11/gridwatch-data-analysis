@@ -1,3 +1,0 @@
-[submodule "dataproc-initialization-actions"]
-	path = dataproc-initialization-actions
-	url = https://github.com/GoogleCloudPlatform/dataproc-initialization-actions

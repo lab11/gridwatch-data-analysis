@@ -20,6 +20,7 @@ worker_machine_type = 'n1-standard-4'
 master_machine_type = 'n1-standard-4'
 bucket = 'powerwatch-analysis'
 zone = 'us-west1-b'
+region = 'us-west1'
 
 if(args.zone):
     zone = args.zone
@@ -72,6 +73,7 @@ if(cluster_exists == False):
                             '--enable-component-gateway',
                             '--initialization-actions=' + 'gs://' + bucket + '/livy.sh',
                             '--zone=' + zone,
+                            '--region=' + region,
                             '--image-version=1.4',
                             '--max-idle=30m',
                             '--num-workers=' + str(num_workers),

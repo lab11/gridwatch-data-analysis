@@ -60,6 +60,15 @@ print("Setting up livy initialization");
 subprocess.check_call(['gsutil', 'cp', './dataproc-initialization-actions/livy/livy.sh','gs://' + bucket + '/livy.sh'])
 print()
 
+#if there is a config file copy it to the root of the storage bucket
+if os.path.exists('./config.json'):
+    print("Setting up config file");
+    subprocess.check_call(['gsutil', 'cp', './config.json','gs://' + bucket + '/config.json'])
+    print()
+else:
+    print("No config file to copy to storage bucket")
+    print()
+
 #list the existing clusters
 output = subprocess.check_output(['gcloud', 'dataproc', 'clusters', 'list'])
 cluster_exists = str(output,'utf-8').find(cluster_name) != -1;
@@ -72,6 +81,7 @@ if(cluster_exists == False):
                             '--optional-components=ANACONDA,JUPYTER',
                             '--enable-component-gateway',
                             '--initialization-actions=' + 'gs://' + bucket + '/livy.sh',
+                            "--metadata=PIP_PACKAGES=google-cloud-storage==1.19.1",
                             '--zone=' + zone,
                             '--region=' + region,
                             '--image-version=1.4',

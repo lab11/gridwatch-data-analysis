@@ -42,3 +42,27 @@ $ ./ipynb-setup.sh
 ## To use the tools
 
 
+# To Access Encrypted Data
+
+There is a keybase encrypted data repository that we use internally. It is
+placed as a submodule of this repo. To access it you must first be part of the
+gridwatch keybase team, then run:
+
+```
+$ git config --global --add protocol.keybase.allow always
+```
+
+in your terminal to enable git to transport keybase repos as submodules.
+
+If you do both of these things then
+
+```
+$ git clone --recursive git@github.com:lab11/powerwatch-site-selection
+```
+should work as expected. If you already have the repository you can run:
+
+```
+$ git submodule update --init --recursive
+```
+
+to get the submodule.

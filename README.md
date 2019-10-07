@@ -57,7 +57,7 @@ in your terminal to enable git to transport keybase repos as submodules.
 If you do both of these things then
 
 ```
-$ git clone --recursive git@github.com:lab11/powerwatch-site-selection
+$ git clone --recursive git@github.com:lab11/gridwatch-data-analsys
 ```
 should work as expected. If you already have the repository you can run:
 

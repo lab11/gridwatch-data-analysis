@@ -16,31 +16,11 @@ The solution to this is twofold:
 
 ## Before you start
 
-You need to setup git to automatically clear ipynb outputs before committing them.
-
-1) Add the ipython cleaner to your path
-
-```
-$ echo 'export PATH="$PATH:'$(pwd)/ipython-cleaner'"' >> ~/.bashrc
-$ source ~/.bashrc
-```
-
-2) Setup git to reference the cleaning script
-
-```
-$ echo '*.ipynb  filter=clean_ipynb' >> ~/.config/git/attributes
-$ git config filter.clean_ipynb.clean ipynb_drop_output.py
-$ git config filter.clean_ipynb.smudge cat
-```
-
-Alternatively just run the setup script
+Run the setup script
 
 ```
 $ ./ipynb-setup.sh
 ```
-
-## To use the tools
-
 
 # To Access Encrypted Data
 

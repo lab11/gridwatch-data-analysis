@@ -119,7 +119,8 @@ if(args.get == False):
                               '--',
                               'gs://' + bucket + '/' + result_name,
                               config['user'],
-                              config['password']], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                              config['password'],
+                              'gs://' + bucket], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except Exception as e:
         print("Error executing analysis script")
         sys.exit(1)

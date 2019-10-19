@@ -46,7 +46,9 @@ for core_1, grid_1 in core_grid.items():
         same_substation = (grid_1[4] == grid_2[4])
 
         distance = 4
-        if same_tx:
+        if core_1 == core_2:
+            distance = 0
+        elif same_tx:
             distance = 1
         elif same_feeder:
             distance = 2
@@ -66,6 +68,11 @@ for core_1, grid_1 in core_grid.items():
             end_time = grid_1[1]
         else: 
             end_time = grid_2[1]
+
+        #if end time is before start time it means that the sensors didn't overlap
+        #just don't add it
+        if end_time < start_time:
+            continue;
 
         grid_distance.append((core_1, core_2, start_time, end_time, distance))
 

@@ -5,8 +5,10 @@ import os
 import csv
 import re
 from datetime import datetime
+import pprint
 
-core_grid = {}
+core_grid = []
+pp = pprint.PrettyPrinter(indent=4)
 
 with open('achimota_grid.csv') as csvfile:
     reader = csv.reader(csvfile)
@@ -17,9 +19,6 @@ with open('achimota_grid.csv') as csvfile:
             first = False
             continue
     
-        if row[0] in core_grid:
-            print('duplicate')
-
         substation = re.search('^[A-Z]*',row[4])
         substation = substation.group(0)
         
@@ -33,17 +32,20 @@ with open('achimota_grid.csv') as csvfile:
         else:
             end_time = datetime.strptime(row[2], '%Y-%m-%d %H:%M:%S')
 
-        core_grid[row[0]] = (start_time.timestamp(), end_time.timestamp(), row[3], row[4], substation)
+        core_grid.append((row[0], start_time.timestamp(), end_time.timestamp(), row[3], row[4], substation))
+
 
 #okay now we have a dict of core_ids
 #create two loops to find grid distance
 grid_distance = []
 
-for core_1, grid_1 in core_grid.items():
-    for core_2, grid_2 in core_grid.items():
-        same_tx = (grid_1[2] == grid_2[2])
-        same_feeder = (grid_1[3] == grid_2[3])
-        same_substation = (grid_1[4] == grid_2[4])
+for grid_1 in core_grid:
+    for grid_2 in core_grid:
+        core_1 = grid_1[0]
+        core_2 = grid_2[0]
+        same_tx = (grid_1[3] == grid_2[3])
+        same_feeder = (grid_1[4] == grid_2[4])
+        same_substation = (grid_1[5] == grid_2[5])
 
         distance = 4
         if core_1 == core_2:
@@ -59,15 +61,15 @@ for core_1, grid_1 in core_grid.items():
         #they are only valid between those times
         start_time = None
         end_time = None
-        if grid_1[0] >= grid_2[0]:
-            start_time = grid_1[0]
+        if grid_1[1] >= grid_2[1]:
+            start_time = grid_1[1]
         else: 
-            start_time = grid_2[0]
+            start_time = grid_2[1]
 
-        if grid_1[1] <= grid_2[1]:
-            end_time = grid_1[1]
+        if grid_1[2] <= grid_2[2]:
+            end_time = grid_1[2]
         else: 
-            end_time = grid_2[1]
+            end_time = grid_2[2]
 
         #if end time is before start time it means that the sensors didn't overlap
         #just don't add it

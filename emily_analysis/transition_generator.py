@@ -25,7 +25,7 @@ spark = SparkSession.builder.appName("SAIDI/SAIFI cluster size").getOrCreate()
 
 ### It's really important that you partition on this data load!!! otherwise your executors will timeout and the whole thing will fail
 start_time = '2018-07-01'
-end_time = '2018-08-01'
+end_time = '2019-09-01'
 cluster_distance_seconds = 180
 CD = cluster_distance_seconds
 
@@ -133,5 +133,5 @@ pw_df = pw_df.withColumn("minute",F.date_trunc("minute", F.from_unixtime("outage
 pw_df = pw_df.withColumn("day",F.date_trunc("day", F.from_unixtime("outage_time")))
 pw_df = pw_df.join(pw_powered_locations,pw_df.minute == pw_powered_locations.minute, how='left')
 pw_df = pw_df.join(pw_distinct_core_id,pw_df.day == pw_distinct_core_id.day, how='left')
-pw_df = pw_df.select("core_id","time","outage_time","restore_time","location_latitude","location_longitude",col("loc_struct").alias("powered_sensors"),"sensors_reporting")
+pw_df = pw_df.select("core_id","time","outage_time","restore_time","location_latitude","location_longitude",F.explode(col("loc_struct")).alias("powered_sensors"),"sensors_reporting")
 pw_df.repartition(1).write.parquet(args.result + '/outage_transitions',mode='overwrite',compression='gzip')

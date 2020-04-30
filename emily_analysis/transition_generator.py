@@ -74,11 +74,11 @@ pw_df.cache()
 
 #We should mark every row with the number of unique sensors reporting in +-5 days so we now the denominator for SAIDI/SAIFI
 pw_distinct_core_id = pw_df.select("time","core_id")
-pw_distinct_core_id = pw_distinct_core_id.groupBy(F.window("time", '10 days', '1 day')).agg(F.countDistinct("core_id"))
+pw_distinct_core_id = pw_distinct_core_id.groupBy(F.window("time", '10 days', '1 day')).agg(F.countDistinct("core_id"),F.array_distinct(F.collect_list("core_id")).alias("core_ids_reporting"))
 pw_distinct_core_id = pw_distinct_core_id.withColumn("time", F.from_unixtime((F.unix_timestamp(col("window.start")) + F.unix_timestamp(col("window.end")))/2))
-pw_distinct_core_id = pw_distinct_core_id.select(col("count(DISTINCT core_id)").alias("sensors_reporting"), "time")
+pw_distinct_core_id = pw_distinct_core_id.select(col("count(DISTINCT core_id)").alias("sensors_reporting"), "time","core_ids_reporting")
 pw_distinct_core_id = pw_distinct_core_id.withColumn("day",F.date_trunc("day","time"))
-pw_distinct_core_id = pw_distinct_core_id.select("day","sensors_reporting")
+pw_distinct_core_id = pw_distinct_core_id.select("day","sensors_reporting","core_ids_reporting")
 
 pw_powered_locations = pw_df.select("time","is_powered","core_id","location_latitude","location_longitude")
 pw_powered_locations = pw_powered_locations.withColumn("is_powered",col("is_powered").cast(IntegerType()))
@@ -133,5 +133,5 @@ pw_df = pw_df.withColumn("minute",F.date_trunc("minute", F.from_unixtime("outage
 pw_df = pw_df.withColumn("day",F.date_trunc("day", F.from_unixtime("outage_time")))
 pw_df = pw_df.join(pw_powered_locations,pw_df.minute == pw_powered_locations.minute, how='left')
 pw_df = pw_df.join(pw_distinct_core_id,pw_df.day == pw_distinct_core_id.day, how='left')
-pw_df = pw_df.select("core_id","time","outage_time","restore_time","location_latitude","location_longitude",F.explode(col("loc_struct")).alias("powered_sensors"),"sensors_reporting")
+pw_df = pw_df.select("core_id","time","outage_time","restore_time","location_latitude","location_longitude",F.explode(col("loc_struct")).alias("powered_sensors"),"sensors_reporting","core_ids_reporting")
 pw_df.repartition(1).write.parquet(args.result + '/outage_transitions',mode='overwrite',compression='gzip')
